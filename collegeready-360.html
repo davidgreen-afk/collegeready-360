@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CollegeReady 360 | CQI360</title>
+<style>
+  :root{
+    --navy:#0D2137; --teal:#0B7A75; --teal-light:#14A5A0; --gold:#F4A825;
+    --slate:#334155; --bg:#F7F8FA; --card:#FFFFFF; --border:#E2E5EA;
+    --red:#C0392B; --amber:#D68910; --green:#1E8449;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:Calibri,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--slate);line-height:1.5;}
+  h1,h2,h3{font-family:Georgia,Cambria,'Times New Roman',serif;color:var(--navy);}
+  .app-header{background:var(--navy);color:#fff;padding:26px 20px 20px;}
+  .app-header .inner{max-width:900px;margin:0 auto;}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .brand-badge{background:var(--gold);color:var(--navy);font-weight:bold;font-family:Georgia,serif;padding:3px 10px;border-radius:4px;font-size:0.85rem;}
+  .app-header h1{color:#fff;font-size:1.6rem;margin:0 0 6px;}
+  .app-header p{margin:0;color:#C9D4DE;font-size:0.95rem;}
+  .purpose{margin-top:14px;padding:12px 14px;background:rgba(255,255,255,0.06);border-left:3px solid var(--gold);border-radius:4px;}
+  .purpose .k{color:var(--gold);font-weight:bold;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:4px;}
+  .purpose p{color:#E4E9EE;font-size:0.88rem;margin:0;}
+  .meta-row{display:flex;gap:16px;margin-top:12px;font-size:0.8rem;color:#9FB0C2;flex-wrap:wrap;}
+  .wrap{max-width:900px;margin:0 auto;padding:22px 20px 60px;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:26px 24px;box-shadow:0 1px 3px rgba(13,33,55,0.06);margin-bottom:18px;}
+  .screen{display:none;}
+  .screen.active{display:block;}
+
+  .btn{border:none;border-radius:6px;padding:12px 20px;font-weight:600;font-size:0.92rem;cursor:pointer;font-family:inherit;}
+  .btn-primary{background:var(--teal);color:#fff;}
+  .btn-primary:hover{background:var(--navy);}
+  .btn-primary:disabled{opacity:0.4;cursor:not-allowed;}
+  .btn-secondary{background:#fff;border:1px solid var(--border);color:var(--slate);}
+  .btn-secondary:hover{border-color:var(--teal-light);}
+
+  .progress-wrap{position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:10;}
+  .progress-bar{height:6px;background:#E2E5EA;border-radius:3px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--teal);width:0%;transition:width 0.2s;}
+  .progress-label{font-size:0.78rem;color:#8592A3;margin-top:4px;}
+
+  .indicator{border-top:1px solid var(--border);padding:16px 0;}
+  .indicator:first-of-type{border-top:none;}
+  .indicator .sk-label{font-weight:700;color:var(--navy);font-size:0.95rem;}
+  .indicator .sk-desc{font-size:0.8rem;color:#64748B;margin:2px 0 10px;}
+  .indicator .sk-statement{font-size:0.9rem;color:var(--slate);margin:0 0 10px;font-style:italic;}
+  .likert{display:flex;flex-wrap:wrap;gap:6px;}
+  .likert label{flex:1 1 auto;min-width:88px;text-align:center;border:1px solid var(--border);border-radius:6px;padding:8px 6px;font-size:0.76rem;cursor:pointer;background:#FCFCFD;color:#64748B;}
+  .likert input{display:none;}
+  .likert label.checked{border-color:var(--teal);background:var(--teal);color:#fff;font-weight:600;}
+  .likert label.na.checked{border-color:#8592A3;background:#8592A3;}
+
+  .score-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .score-row .lbl{width:210px;flex-shrink:0;font-size:0.86rem;font-weight:600;color:var(--navy);}
+  .score-row .bar-track{flex:1;background:#EEF1F4;border-radius:5px;height:16px;overflow:hidden;}
+  .score-row .bar-fill{height:100%;border-radius:5px;}
+  .score-row .val{width:46px;text-align:right;font-size:0.8rem;font-weight:600;color:var(--slate);flex-shrink:0;}
+
+  .insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+  @media(max-width:620px){.insight-grid{grid-template-columns:1fr;}}
+  .insight-card{border-radius:8px;padding:14px 16px;}
+  .insight-card.strong{background:#EAF7EE;border:1px solid #BEE3C8;}
+  .insight-card.priority{background:#FDF1E3;border:1px solid #F3D9AE;}
+  .insight-card .k{font-size:0.72rem;text-transform:uppercase;font-weight:bold;letter-spacing:0.5px;margin-bottom:4px;}
+  .insight-card.strong .k{color:var(--green);}
+  .insight-card.priority .k{color:var(--amber);}
+  .insight-card .v{font-size:0.98rem;font-weight:700;color:var(--navy);}
+
+  .rec-list{list-style:none;padding:0;margin:0;}
+  .rec-list li{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--border);}
+  .rec-list li:first-child{border-top:none;}
+  .rec-list .num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--teal);color:#fff;font-size:0.78rem;font-weight:bold;display:flex;align-items:center;justify-content:center;}
+  .rec-list .txt{font-size:0.88rem;color:var(--slate);}
+
+  .disclaimer{font-size:0.76rem;color:#A6AEBA;font-style:italic;margin:14px 0;}
+
+  .cta-box{background:linear-gradient(135deg,var(--navy),#123049);color:#fff;border-radius:10px;padding:22px;margin-top:20px;}
+  .cta-box h3{color:#fff;font-size:1.05rem;margin:0 0 8px;}
+  .cta-box p{color:#C9D4DE;font-size:0.9rem;margin:0 0 16px;}
+  .cta-actions{display:flex;flex-wrap:wrap;gap:10px;}
+  .cta-actions a,.cta-actions button{display:inline-block;text-decoration:none;padding:10px 16px;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:inherit;border:none;}
+  .cta-gold{background:var(--gold);color:var(--navy);}
+  .cta-outline{background:transparent;border:1px solid #55708A !important;color:#fff;}
+
+  .nav-row{display:flex;justify-content:space-between;margin-top:18px;gap:10px;}
+  footer{text-align:center;color:#8592A3;font-size:0.78rem;padding:20px 0 40px;}
+  footer .fbrand{color:var(--navy);font-weight:bold;}
+
+  @media print{
+    .app-header,.nav-row,.progress-wrap,.cta-actions{display:none !important;}
+    body{background:#fff;}
+    .card{box-shadow:none;border:none;}
+    .screen{display:block !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="inner">
+    <div class="brand"><span class="brand-badge">CQI360</span><span style="font-size:0.8rem;color:#9FB0C2;">College Readiness Self-Study</span></div>
+    <h1>CollegeReady 360</h1>
+    <p>A self-study for a parent and a soon-to-be college student to work through together &mdash; 15 skills, one shared answer for each, talked out loud rather than scored separately.</p>
+    <div class="purpose">
+      <span class="k">Purpose</span>
+      <p>Go through all 15 skills together and agree on one honest rating for each, rather than each of you scoring it alone. The conversation you have while deciding on an answer is the actual point &mdash; the results page just gives you a place to land afterward and a short list of what's worth working on before move-in day.</p>
+    </div>
+    <div class="meta-row">
+      <span>&#9201; 10&ndash;15 minutes, done together</span>
+      <span>&#9776; 15 skills, one shared rating each</span>
+      <span>&#128274; No login, nothing saved or sent anywhere</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- SCREEN 0: INTRO -->
+  <div class="screen active" id="screen-intro">
+    <div class="card">
+      <h3 style="margin-top:0;">How this works</h3>
+      <p style="font-size:0.9rem;">For each of the 15 skills below, read the statement out loud and talk until you both agree on one rating, from Strongly Disagree to Strongly Agree. Disagreement is normal and useful &mdash; it usually means you're each holding a different piece of evidence. Work it out, then pick the answer you both land on.</p>
+      <p style="font-size:0.9rem;">This is a self-report tool, not a clinical or academic assessment. It's meant to start a conversation, not settle one.</p>
+      <button class="btn btn-primary" id="beginBtn">Begin the self-study &rarr;</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 1: ASSESSMENT -->
+  <div class="screen" id="screen-assessment">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">0 of 15 answered</div>
+    </div>
+    <div class="card" id="skillList"></div>
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="backToIntroBtn">&larr; Back</button>
+      <button class="btn btn-primary" id="viewResultsBtn" disabled>View Our Results &rarr;</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: RESULTS -->
+  <div class="screen" id="screen-results">
+    <div class="card">
+      <h2 style="margin-top:0;">Your Readiness Profile</h2>
+      <p class="disclaimer" style="margin-top:0;">A self-reported, jointly-agreed profile &mdash; not a validated readiness score.</p>
+      <div id="barChart"></div>
+
+      <div class="insight-grid">
+        <div class="insight-card strong"><div class="k">Strongest area</div><div class="v" id="strongestLabel">&mdash;</div></div>
+        <div class="insight-card priority"><div class="k">Worth building before move-in</div><div class="v" id="priorityLabel">&mdash;</div></div>
+      </div>
+
+      <h3 style="font-size:1rem;">Worth talking through further</h3>
+      <ul class="rec-list" id="recList"></ul>
+      <p class="disclaimer">These are starting points for a conversation, not a diagnosis. A self-report answer can tell you where to look, not why a pattern exists.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;font-size:1.05rem;">What a self-study like this can and can't tell you</h3>
+      <p style="font-size:0.9rem;">This gives you a shared starting point and a short list of what to work on, nothing more. It can't tell you whether a low score reflects a real gap, a bad week, or just an area neither of you has tested yet. That distinction, and what to actually do about it, is where a closer, structured conversation helps.</p>
+      <div class="cta-box">
+        <h3>Want help with the plan, not just the conversation?</h3>
+        <p id="ctaPersonalized">CQI360's founder has spent over 20 years teaching college freshmen at major universities and has seen these exact gaps play out in real classrooms. CQI360 works with families, schools, and student-support programs to turn moments like this into a concrete plan for the summer before college.</p>
+        <div class="cta-actions">
+          <a class="cta-gold" id="requestReviewBtn" href="#">Email Our Results to CQI360</a>
+          <button class="cta-outline" id="exportBtn">Export results as text</button>
+          <button class="cta-outline" id="printBtn">Print / Save as PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="backToAssessmentBtn">&larr; Back to answers</button>
+      <button class="btn btn-secondary" id="restartBtn">Start over</button>
+    </div>
+  </div>
+
+  <footer>
+    Built by <span class="fbrand">CQI360</span> &middot; Systems Clarity, Evidence Into Action &middot; <a href="https://cqi360.com" style="color:#8592A3;">cqi360.com</a>
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG — 15 skills, original phrasing and indicator statements
+   (independently written; not reproduced from any source)
+   ============================================================ */
+const LIKERT = [
+  {v:0, label:'Strongly Disagree'}, {v:1, label:'Disagree'},
+  {v:2, label:'Agree'}, {v:3, label:'Strongly Agree'}, {v:'na', label:'Not Sure'}
+];
+
+const SKILLS = [
+  {id:'communication', label:'Communication',
+   desc:'Getting a point across clearly, and actually listening to the answer.',
+   statement:"We can explain what we need or think, in person or in writing, without the other person having to guess.",
+   rec:"Communication may still need practice in higher-stakes settings. Worth trying: have your student explain something awkward or complicated to an adult who isn't you, and see how it goes."},
+  {id:'time', label:'Time Management',
+   desc:'Keeping several commitments moving without everything landing the night before.',
+   statement:"We believe a realistic weekly schedule, classes, a job, laundry, sleep, could actually hold up.",
+   rec:"A written weekly schedule may reveal gaps a conversation alone won't. Worth trying: map out one real college week together, hour by hour, and see if the math works."},
+  {id:'adapt', label:'Adaptability',
+   desc:'Staying functional when the plan changes or the surroundings are unfamiliar.',
+   statement:"When a plan falls apart on short notice, our student adjusts instead of shutting down.",
+   rec:"Adaptability under real pressure is hard to self-assess in advance. Worth trying: talk through the last time a plan fell apart, step by step, and what actually happened next."},
+  {id:'critical', label:'Critical Thinking',
+   desc:'Asking whether a claim holds up before accepting it, and working a problem instead of guessing.',
+   statement:"Before accepting something as true, our student asks where it's coming from and whether it holds up.",
+   rec:"Critical thinking tends to show up more in practice than in self-report. Worth trying: pick a recent headline or claim and talk through how you'd both actually verify it."},
+  {id:'teamwork', label:'Collaboration & Teamwork',
+   desc:'Doing real group work, not just dividing a project into solo pieces.',
+   statement:"In group work, our student actually coordinates with others instead of just doing their piece alone.",
+   rec:"Teamwork habits often depend heavily on the specific group. Worth trying: ask about the last group project in detail, who did what, and whether it felt like a team."},
+  {id:'eq', label:'Emotional Intelligence',
+   desc:'Noticing your own reactions and other people\u2019s, and not letting either one run the show.',
+   statement:"Our student can usually name what they're feeling in the moment and choose how to respond instead of just reacting.",
+   rec:"Emotional regulation is easiest to see in a real moment, not a conversation about it. Worth trying: ask what they actually do in the ten minutes right after something upsets them."},
+  {id:'resilience', label:'Resilience',
+   desc:'Taking a setback without it derailing the next week.',
+   statement:"A bad grade or a rejection sets our student back for a day or two, not weeks.",
+   rec:"Resilience is hard to predict until it's tested. Worth trying: talk through the last real disappointment and how long it actually took to move past it."},
+  {id:'leadership', label:'Leadership',
+   desc:'Stepping up to organize or guide a group when it needs doing.',
+   statement:"When a group needs direction, our student is willing to step up and provide it.",
+   rec:"Leadership comfort often depends on the setting. Worth trying: ask for a specific example of taking charge of something nobody assigned to them."},
+  {id:'problem', label:'Problem-Solving',
+   desc:'Breaking a stuck situation into pieces and trying something, instead of waiting to be rescued.',
+   statement:"When our student hits a real problem, they try a few approaches themselves before asking someone else to solve it.",
+   rec:"Problem-solving independence is easy to overstate in theory. Worth trying: recall the last logistical mess, a missed bus, a broken printer, a scheduling conflict, and who actually solved it."},
+  {id:'network', label:'Networking',
+   desc:'Building relationships with people who aren\u2019t already friends or family, on purpose.',
+   statement:"Our student is comfortable introducing themselves to an adult or a stranger when it's useful to know them.",
+   rec:"Networking comfort usually needs a real low-stakes rep to build. Worth trying: role-play approaching a professor or an RA they've never spoken to."},
+  {id:'interpersonal', label:'Interpersonal Skills',
+   desc:'Getting along day to day, including disagreements, without it turning into a bigger mess.',
+   statement:"When our student disagrees with someone, they can usually work it out without it turning into a bigger conflict.",
+   rec:"Conflict resolution habits often show up differently with roommates than with family. Worth trying: ask about the last disagreement with a friend and how it actually got resolved, if it did."},
+  {id:'selfmotivation', label:'Self-Motivation',
+   desc:'Getting started and staying on task without someone standing over you.',
+   statement:"Our student gets started on work without being reminded or nagged first.",
+   rec:"Self-starting is one of the biggest gaps between home and college life. Worth trying: ask honestly what currently gets homework started, a deadline, a reminder, or just themselves."},
+  {id:'cultural', label:'Cultural Competence',
+   desc:'Being able to function and connect across real differences in background, not just tolerate them.',
+   statement:"Our student is comfortable around people whose background or beliefs are pretty different from their own.",
+   rec:"This is easier to claim than to practice. Worth trying: ask about a friendship or conversation where someone saw the world quite differently, and how that actually went."},
+  {id:'financial', label:'Financial Literacy',
+   desc:'Understanding where money comes from, where it goes, and what debt actually costs.',
+   statement:"Our student knows roughly what they spend in a typical month and whether it's more than what's coming in.",
+   rec:"Financial self-awareness is easy to overestimate without looking at real numbers. Worth trying: pull up a bank app together and see if the estimate matches reality."},
+  {id:'digital', label:'Digital Literacy',
+   desc:'Using everyday tech and information tools competently, not just socially.',
+   statement:"Our student can use everyday tools (email, docs, basic research) for real tasks, not just texting and social apps.",
+   rec:"Comfort with social apps doesn't always transfer to professional tools. Worth trying: have them draft a properly formatted email to a hypothetical professor, right now, and see how it goes."}
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let answers = new Array(SKILLS.length).fill(null);
+
+/* ============================================================
+   ASSESSMENT RENDER
+   ============================================================ */
+function renderList(){
+  const container = document.getElementById('skillList');
+  container.innerHTML = SKILLS.map((s,i)=>`
+    <div class="indicator">
+      <div class="sk-label">${s.label}</div>
+      <div class="sk-desc">${s.desc}</div>
+      <div class="sk-statement">"${s.statement}"</div>
+      <div class="likert" data-qidx="${i}">
+        ${LIKERT.map(o=>`<label class="${o.v==='na'?'na':''}" data-val="${o.v}">
+          <input type="radio" name="q${i}" value="${o.v}">${o.label}
+        </label>`).join('')}
+      </div>
+    </div>`).join('');
+
+  container.querySelectorAll('.likert').forEach(group=>{
+    const qidx = parseInt(group.dataset.qidx,10);
+    group.querySelectorAll('label').forEach(lab=>{
+      lab.addEventListener('click', ()=>{
+        const val = lab.dataset.val === 'na' ? 'na' : parseInt(lab.dataset.val,10);
+        answers[qidx] = val;
+        group.querySelectorAll('label').forEach(l=>l.classList.remove('checked'));
+        lab.classList.add('checked');
+        lab.querySelector('input').checked = true;
+        updateProgress();
+      });
+    });
+  });
+}
+function updateProgress(){
+  const answered = answers.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width = (answered/SKILLS.length*100)+'%';
+  document.getElementById('progressLabel').textContent = `${answered} of ${SKILLS.length} answered`;
+  document.getElementById('viewResultsBtn').disabled = answered < SKILLS.length;
+}
+
+/* ============================================================
+   SCORING
+   ============================================================ */
+function computeScores(){
+  return SKILLS.map((s,i)=>{
+    const v = answers[i];
+    const score = (v!==null && v!=='na') ? v*(5/3) : null; // scale 0-3 (4-point, no Neutral) -> 0-5
+    return {...s, score};
+  });
+}
+function bandColor(score){
+  if(score===null) return '#C7CDD6';
+  if(score < 2.5) return 'var(--red)';
+  if(score < 3.75) return 'var(--amber)';
+  return 'var(--green)';
+}
+
+/* ============================================================
+   RESULTS
+   ============================================================ */
+function renderResults(){
+  const scored = computeScores();
+  const ranked = scored.filter(s=>s.score!==null).sort((a,b)=>b.score-a.score);
+
+  document.getElementById('barChart').innerHTML = ranked.map(r=>{
+    const pct = Math.max((r.score/5*100), 2.5);
+    return `
+    <div class="score-row">
+      <div class="lbl">${r.label}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct.toFixed(1)}%;background:${bandColor(r.score)};"></div></div>
+      <div class="val">${r.score.toFixed(1)}/5</div>
+    </div>`;
+  }).join('');
+
+  const strongest = ranked[0];
+  const weakest = ranked[ranked.length-1];
+  const secondWeakest = ranked[ranked.length-2];
+  document.getElementById('strongestLabel').textContent = strongest.label;
+  document.getElementById('priorityLabel').textContent = weakest.label;
+
+  const recDims = [weakest, secondWeakest].filter(Boolean);
+  const recTexts = recDims.map(r=>r.rec);
+  recTexts.push("Come back and do this again in a month or two, closer to move-in. The most useful signal isn't a single score, it's whether these answers are shifting as your student gets more practice.");
+  document.getElementById('recList').innerHTML = recTexts.map((t,i)=>`
+    <li><div class="num">${i+1}</div><div class="txt">${t}</div></li>`).join('');
+
+  document.getElementById('ctaPersonalized').innerHTML =
+    `Your shared answers point to <strong>${weakest.label}</strong> as the area most worth building before move-in. CQI360's founder has spent over 20 years teaching college freshmen at major universities and has seen this exact gap play out in real classrooms &mdash; and wants to help families like yours get ahead of it before the semester starts.`;
+
+  const reviewLink = document.getElementById('requestReviewBtn');
+  const subject = encodeURIComponent('CollegeReady 360 results');
+  const body = encodeURIComponent(compileResultsText());
+  reviewLink.href = `mailto:david.green@cqi360.com?subject=${subject}&body=${body}`;
+}
+
+function compileResultsText(){
+  const scored = computeScores();
+  let out = 'COLLEGEREADY 360 — RESULTS\n' + new Date().toLocaleDateString() + '\n\n';
+  out += 'SKILL (0-5 scale, jointly agreed)\n' + '-'.repeat(40) + '\n';
+  scored.forEach(s=>{
+    out += `${s.label}: ${s.score!==null ? s.score.toFixed(1)+'/5' : 'not answered'}\n`;
+  });
+  out += '\nThis is a self-reported, jointly-agreed profile, not a validated readiness score. Generated with CollegeReady 360, a CQI360 self-study tool.\n';
+  return out;
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+document.getElementById('beginBtn').addEventListener('click', ()=>{
+  renderList();
+  updateProgress();
+  showScreen('screen-assessment');
+});
+document.getElementById('backToIntroBtn').addEventListener('click', ()=> showScreen('screen-intro'));
+document.getElementById('viewResultsBtn').addEventListener('click', ()=>{
+  renderResults();
+  showScreen('screen-results');
+});
+document.getElementById('backToAssessmentBtn').addEventListener('click', ()=> showScreen('screen-assessment'));
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  answers = new Array(SKILLS.length).fill(null);
+  showScreen('screen-intro');
+});
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const blob = new Blob([compileResultsText()], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'collegeready-360-results.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+document.getElementById('printBtn').addEventListener('click', ()=> window.print());
+</script>
+</body>
+</html>
